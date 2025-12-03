@@ -147,13 +147,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Citizen.h" />
+    <ClInclude Include="ClassNode.h" />
     <ClInclude Include="CNICHashTable.h" />
+    <ClInclude Include="DepartmentNode.h" />
     <ClInclude Include="Doctor.h" />
     <ClInclude Include="DoctorManager.h" />
     <ClInclude Include="EmergencyHeap.h" />
+    <ClInclude Include="FacilityNode.h" />
+    <ClInclude Include="FacultyNode.h" />
     <ClInclude Include="Hospital.h" />
     <ClInclude Include="HospitalManager.h" />
     <ClInclude Include="Household.h" />
+    <ClInclude Include="MallNode.h" />
     <ClInclude Include="Medicine.h" />
     <ClInclude Include="MedicineHashTable.h" />
     <ClInclude Include="Patient.h" />
@@ -161,8 +166,16 @@
     <ClInclude Include="Pharmacy.h" />
     <ClInclude Include="PharmacyManager.h" />
     <ClInclude Include="PopulationManager.h" />
+    <ClInclude Include="ProductHashTable.h" />
+    <ClInclude Include="ProductNode.h" />
+    <ClInclude Include="SchoolMinHeap.h" />
+    <ClInclude Include="SchoolNode.h" />
+    <ClInclude Include="SchoolTree.h" />
     <ClInclude Include="Sector.h" />
     <ClInclude Include="Street.h" />
+    <ClInclude Include="StudentNode.h" />
+    <ClInclude Include="SubjectHashNode.h" />
+    <ClInclude Include="SubjectHashTable.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

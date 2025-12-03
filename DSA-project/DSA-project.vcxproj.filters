@@ -119,5 +119,44 @@
     <ClInclude Include="PatientManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ClassNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DepartmentNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FacilityNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FacultyNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MallNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProductHashTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProductNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SchoolMinHeap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SchoolNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SchoolTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StudentNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SubjectHashNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SubjectHashTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
