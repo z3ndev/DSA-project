@@ -190,6 +190,17 @@ Hospital* HospitalManager::searchById(const string& id) {
     return nullptr;
 }
 
+bool HospitalManager::hospitalIdExists(const string& id) {
+    string lowerSearchId = toLowercase(id);
+    
+    for (int i = 0; i < hospitalCount; i++) {
+        if (toLowercase(hospitals[i].id) == lowerSearchId) {
+            return true;
+        }
+    }
+    return false;
+}
+
 Hospital* HospitalManager::getHospitalAt(int index) {
     if (index >= 0 && index < hospitalCount) {
         return &hospitals[index];
@@ -213,8 +224,16 @@ void HospitalManager::addHospitalInteractive() {
     Hospital h;
     cout << "Enter Hospital ID: ";
     getline(cin, h.id);
+    
+    // Check if hospital ID already exists (case-insensitive)
+    if (hospitalIdExists(h.id)) {
+        cout << "Error: A hospital with this ID already exists!\n";
+        return;
+    }
+    
     cout << "Enter Hospital Name: ";
     getline(cin, h.name);
+    
     cout << "Enter Sector: ";
     getline(cin, h.sector);
     

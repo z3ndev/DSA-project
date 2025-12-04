@@ -41,6 +41,9 @@ public:
 
     // Search hospital by ID
     Hospital* searchById(const string& id);
+    
+    // Check if hospital ID already exists (case-insensitive)
+    bool hospitalIdExists(const string& id);
 
     // Get total hospital count
     int getCount() const { return hospitalCount; }

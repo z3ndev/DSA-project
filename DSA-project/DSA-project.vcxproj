@@ -127,6 +127,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BusHashNode.cpp" />
+    <ClCompile Include="BusHashTable.cpp" />
+    <ClCompile Include="BusRouteList.cpp" />
+    <ClCompile Include="BusRouteNode.cpp" />
     <ClCompile Include="Citizen.cpp" />
     <ClCompile Include="CNICHashTable.cpp" />
     <ClCompile Include="Doctor.cpp" />
@@ -138,14 +142,28 @@
     <ClCompile Include="MedicineFormulaHashTable.cpp" />
     <ClCompile Include="MedicineFormulaHashTable.h" />
     <ClCompile Include="MedicineHashTable.cpp" />
+    <ClCompile Include="PassengerQueue.cpp" />
     <ClCompile Include="Patient.cpp" />
     <ClCompile Include="PatientManager.cpp" />
     <ClCompile Include="PharmacyManager.cpp" />
     <ClCompile Include="PopulationManager.cpp" />
     <ClCompile Include="Sector.cpp" />
     <ClCompile Include="Street.cpp" />
+    <ClCompile Include="TBus.cpp" />
+    <ClCompile Include="TDijkstra.cpp" />
+    <ClCompile Include="TGraph.cpp" />
+    <ClCompile Include="TGraphEdge.cpp" />
+    <ClCompile Include="TGraphNode.cpp" />
+    <ClCompile Include="TMinHeap.cpp" />
+    <ClCompile Include="TPassenger.cpp" />
+    <ClCompile Include="TransportManager.cpp" />
+    <ClCompile Include="TravelHistory.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BusHashNode.h" />
+    <ClInclude Include="BusHashTable.h" />
+    <ClInclude Include="BusRouteList.h" />
+    <ClInclude Include="BusRouteNode.h" />
     <ClInclude Include="Citizen.h" />
     <ClInclude Include="ClassNode.h" />
     <ClInclude Include="CNICHashTable.h" />
@@ -161,6 +179,7 @@
     <ClInclude Include="MallNode.h" />
     <ClInclude Include="Medicine.h" />
     <ClInclude Include="MedicineHashTable.h" />
+    <ClInclude Include="PassengerQueue.h" />
     <ClInclude Include="Patient.h" />
     <ClInclude Include="PatientManager.h" />
     <ClInclude Include="Pharmacy.h" />
@@ -176,6 +195,15 @@
     <ClInclude Include="StudentNode.h" />
     <ClInclude Include="SubjectHashNode.h" />
     <ClInclude Include="SubjectHashTable.h" />
+    <ClInclude Include="TBus.h" />
+    <ClInclude Include="TDijkstra.h" />
+    <ClInclude Include="TGraph.h" />
+    <ClInclude Include="TGraphEdge.h" />
+    <ClInclude Include="TGraphNode.h" />
+    <ClInclude Include="TMinHeap.h" />
+    <ClInclude Include="TPassenger.h" />
+    <ClInclude Include="TransportManager.h" />
+    <ClInclude Include="TravelHistory.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
