@@ -12,6 +12,17 @@ using namespace std;
 class SchoolTree {
 private:
     SchoolNode* head;
+    
+    // Helper function to convert string to lowercase
+    string toLowercase(const string& str) const {
+        string result = str;
+        for (size_t i = 0; i < result.length(); i++) {
+            if (result[i] >= 'A' && result[i] <= 'Z') {
+                result[i] = result[i] + ('a' - 'A');
+            }
+        }
+        return result;
+    }
 
 public:
     SchoolTree() :head(NULL) {}
@@ -101,9 +112,12 @@ public:
     }
 
     SchoolNode* searchSchoolByID(string schoolID) {
+        // Case-insensitive search
+        string lowerSearchID = toLowercase(schoolID);
+        
         SchoolNode* curr = head;
         while (curr) {
-            if (curr->getSchoolID() == schoolID) return curr;
+            if (toLowercase(curr->getSchoolID()) == lowerSearchID) return curr;
             curr = curr->getNext();
         }
         return NULL;
