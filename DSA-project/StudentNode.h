@@ -7,22 +7,21 @@ using namespace std;
 
 class StudentNode {
 private:
-    string name, roll;
-    int age;
+    string name;
+    string studentID;
     StudentNode* next;
 
 public:
-    StudentNode(string n, int a, string r) :name(n), age(a), roll(r), next(NULL) {}
+    StudentNode(string n, string id) :name(n), studentID(id), next(NULL) {}
 
     string getName() { return name; }
-    int getAge() { return age; }
-    string getRoll() { return roll; }
+    string getStudentID() { return studentID; }
     StudentNode* getNext() { return next; }
 
     void setNext(StudentNode* node) { next = node; }
 
     void display() {
-        cout << "      Name: " << name << ", Age: " << age << ", Roll: " << roll << endl;
+        cout << "      Name: " << name << ", Student ID: " << studentID << endl;
     }
 };
 #endif

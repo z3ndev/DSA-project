@@ -10,12 +10,14 @@ using namespace std;
 class ClassNode {
 private:
     string className;
+    string classID;
     StudentNode* studentHead;
     FacultyNode* facultyHead;
     ClassNode* next;
 
 public:
-    ClassNode(string name) :className(name), studentHead(NULL), facultyHead(NULL), next(NULL) {}
+    ClassNode(string name, string id = "") 
+        :className(name), classID(id), studentHead(NULL), facultyHead(NULL), next(NULL) {}
 
     ~ClassNode() {
         StudentNode* currStudent = studentHead;
@@ -33,6 +35,7 @@ public:
     }
 
     string getClassName() { return className; }
+    string getClassID() { return classID; }
     StudentNode* getStudentHead() { return studentHead; }
     FacultyNode* getFacultyHead() { return facultyHead; }
     ClassNode* getNext() { return next; }
@@ -58,7 +61,7 @@ public:
     }
 
     void display() {
-        cout << "    Class: " << className << endl;
+        cout << "    Class: " << className << " (ID: " << classID << ")" << endl;
         cout << "    Students:" << endl;
         StudentNode* currStudent = studentHead;
         while (currStudent) {

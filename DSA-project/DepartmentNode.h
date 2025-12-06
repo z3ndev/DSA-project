@@ -9,12 +9,14 @@ using namespace std;
 class DepartmentNode {
 private:
     string departmentName;
+    string departmentID;
     ClassNode** classes;
     int classCount, classCapacity;
     DepartmentNode* next;
 
 public:
-    DepartmentNode(string name) :departmentName(name), classCount(0), classCapacity(5), next(NULL) {
+    DepartmentNode(string name, string id = "") 
+        :departmentName(name), departmentID(id), classCount(0), classCapacity(5), next(NULL) {
         classes = new ClassNode * [classCapacity];
     }
 
@@ -24,6 +26,7 @@ public:
     }
 
     string getDepartmentName() { return departmentName; }
+    string getDepartmentID() { return departmentID; }
     ClassNode** getClasses() { return classes; }
     int getClassCount() { return classCount; }
     DepartmentNode* getNext() { return next; }
@@ -42,7 +45,7 @@ public:
     }
 
     void display() {
-        cout << "  Department: " << departmentName << endl;
+        cout << "  Department: " << departmentName << " (ID: " << departmentID << ")" << endl;
         cout << "  Classes (" << classCount << "):" << endl;
         for (int i = 0; i < classCount; i++) classes[i]->display();
     }

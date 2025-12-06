@@ -6,6 +6,7 @@
 using namespace std;
 #include <fstream>
 #include <sstream>
+#include <cmath>
 #include "SchoolNode.h"
 
 class SchoolTree {
@@ -117,6 +118,21 @@ public:
         }
     }
 
+    void listSchools() {
+        cout << "\n===== School List =====\n";
+        SchoolNode* curr = head;
+        int count = 1;
+        while (curr) {
+            cout << count++ << ") ID: " << curr->getSchoolID()
+                 << " | Name: " << curr->getName()
+                 << " | Sector: " << curr->getSector()
+                 << " | Rating: " << curr->getRating()
+                 << " | Coordinates: (" << curr->getLatitude() << ", " << curr->getLongitude() << ")\n";
+            curr = curr->getNext();
+        }
+        cout << "========================\n";
+    }
+
     void loadSchoolsFromCSV(string filename) {
         ifstream file(filename);
         if (!file.is_open()) {
@@ -125,34 +141,189 @@ public:
         }
 
         string line;
-        getline(file, line);
+        getline(file, line); // Skip header
 
         while (getline(file, line)) {
             stringstream ss(line);
-            string id, name, sector, ratingStr, subjectsStr;
+            string id, name, sector, ratingStr, subjectsStr, coordStr;
 
             getline(ss, id, ',');
             getline(ss, name, ',');
             getline(ss, sector, ',');
             getline(ss, ratingStr, ',');
-            getline(ss, subjectsStr);
 
-            if (subjectsStr.size() >= 2 && subjectsStr.front() == '"' && subjectsStr.back() == '"')
-                subjectsStr = subjectsStr.substr(1, subjectsStr.size() - 2);
+            // Parse subjects (quoted, comma-separated)
+            getline(ss, subjectsStr, ',');
+            if (!subjectsStr.empty() && subjectsStr.front() == '"') {
+                // Read until closing quote
+                if (subjectsStr.back() != '"') {
+                    string rest;
+                    while (getline(ss, rest, ',')) {
+                        subjectsStr += "," + rest;
+                        if (!rest.empty() && rest.back() == '"') break;
+                    }
+                }
+                // Remove quotes
+                if (subjectsStr.front() == '"' && subjectsStr.back() == '"') {
+                    subjectsStr = subjectsStr.substr(1, subjectsStr.length() - 2);
+                }
+            }
+
+            // Parse coordinates (last field, quoted "lat, lon")
+            getline(ss, coordStr);
+            if (!coordStr.empty() && coordStr.front() == '"' && coordStr.back() == '"') {
+                coordStr = coordStr.substr(1, coordStr.length() - 2);
+            }
+
+            double latitude = 0.0, longitude = 0.0;
+            stringstream coordStream(coordStr);
+            string latStr, lonStr;
+            if (getline(coordStream, latStr, ',') && getline(coordStream, lonStr)) {
+                size_t start = latStr.find_first_not_of(" \t\r\n");
+                size_t end = latStr.find_last_not_of(" \t\r\n");
+                if (start != string::npos && end != string::npos) {
+                    latStr = latStr.substr(start, end - start + 1);
+                }
+                start = lonStr.find_first_not_of(" \t\r\n");
+                end = lonStr.find_last_not_of(" \t\r\n");
+                if (start != string::npos && end != string::npos) {
+                    lonStr = lonStr.substr(start, end - start + 1);
+                }
+                try { latitude = stod(latStr); } catch (...) { latitude = 0.0; }
+                try { longitude = stod(lonStr); } catch (...) { longitude = 0.0; }
+            }
 
             float rating = stof(ratingStr);
-            SchoolNode* school = new SchoolNode(id, name, sector, rating);
+            SchoolNode* school = new SchoolNode(id, name, sector, rating, latitude, longitude);
 
+            // Parse individual subjects
             stringstream s2(subjectsStr);
             string sub;
             while (getline(s2, sub, ',')) {
-                if (sub.size() && sub.front() == ' ') sub = sub.substr(1);
-                school->addSubject(sub);
+                size_t start = sub.find_first_not_of(" \t\r\n");
+                if (start != string::npos) {
+                    sub = sub.substr(start);
+                }
+                if (!sub.empty()) {
+                    school->addSubject(sub);
+                }
             }
 
             addSchool(school);
         }
         file.close();
+    }
+
+    void loadDepartmentsFromCSV(string filename) {
+        ifstream file(filename);
+        if (!file.is_open()) {
+            cout << "Error opening file: " << filename << endl;
+            return;
+        }
+
+        string line;
+        getline(file, line); // Skip header
+
+        while (getline(file, line)) {
+            stringstream ss(line);
+            string schoolID, deptName, deptID;
+
+            getline(ss, schoolID, ',');
+            getline(ss, deptName, ',');
+            getline(ss, deptID);
+
+            DepartmentNode* dept = new DepartmentNode(deptName, deptID);
+            if (!addDepartmentToSchool(schoolID, dept)) {
+                cout << "Warning: Could not add department " << deptName 
+                     << " to school " << schoolID << endl;
+                delete dept;
+            }
+        }
+        file.close();
+    }
+
+    void loadClassesFromCSV(string filename) {
+        ifstream file(filename);
+        if (!file.is_open()) {
+            cout << "Error opening file: " << filename << endl;
+            return;
+        }
+
+        string line;
+        getline(file, line); // Skip header
+
+        while (getline(file, line)) {
+            stringstream ss(line);
+            string schoolID, deptName, className, classID;
+
+            getline(ss, schoolID, ',');
+            getline(ss, deptName, ',');
+            getline(ss, className, ',');
+            getline(ss, classID);
+
+            ClassNode* cls = new ClassNode(className, classID);
+            if (!addClassToDepartment(schoolID, deptName, cls)) {
+                cout << "Warning: Could not add class " << className 
+                     << " to department " << deptName << " in school " << schoolID << endl;
+                delete cls;
+            }
+        }
+        file.close();
+    }
+
+    void loadStudentsFromCSV(string filename) {
+        ifstream file(filename);
+        if (!file.is_open()) {
+            cout << "Error opening file: " << filename << endl;
+            return;
+        }
+
+        string line;
+        getline(file, line); // Skip header
+
+        while (getline(file, line)) {
+            stringstream ss(line);
+            string schoolID, deptName, className, studentName, studentID;
+
+            getline(ss, schoolID, ',');
+            getline(ss, deptName, ',');
+            getline(ss, className, ',');
+            getline(ss, studentName, ',');
+            getline(ss, studentID);
+
+            StudentNode* student = new StudentNode(studentName, studentID);
+            if (!addStudentToClass(schoolID, deptName, className, student)) {
+                cout << "Warning: Could not add student " << studentName 
+                     << " to class " << className << endl;
+                delete student;
+            }
+        }
+        file.close();
+    }
+
+    SchoolNode* findNearestByCoord(double lat, double lon, double* outDistance = nullptr) {
+        if (!head) return nullptr;
+
+        SchoolNode* nearest = head;
+        double minDistance = sqrt((lat - head->getLatitude()) * (lat - head->getLatitude()) +
+                                  (lon - head->getLongitude()) * (lon - head->getLongitude()));
+
+        SchoolNode* curr = head->getNext();
+        while (curr) {
+            double distance = sqrt((lat - curr->getLatitude()) * (lat - curr->getLatitude()) +
+                                   (lon - curr->getLongitude()) * (lon - curr->getLongitude()));
+            if (distance < minDistance) {
+                minDistance = distance;
+                nearest = curr;
+            }
+            curr = curr->getNext();
+        }
+
+        if (outDistance != nullptr) {
+            *outDistance = minDistance;
+        }
+
+        return nearest;
     }
 };
 #endif

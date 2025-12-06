@@ -10,6 +10,7 @@ class SchoolNode {
 private:
     string schoolID, name, sector;
     float rating;
+    double latitude, longitude;
     string* subjects;
     int subjectCount;
     DepartmentNode** departments;
@@ -17,7 +18,9 @@ private:
     SchoolNode* next;
 
 public:
-    SchoolNode(string id, string n, string s, float r) :schoolID(id), name(n), sector(s), rating(r), subjectCount(0), deptCount(0), deptCapacity(5), next(NULL) {
+    SchoolNode(string id, string n, string s, float r, double lat = 0.0, double lon = 0.0) 
+        :schoolID(id), name(n), sector(s), rating(r), latitude(lat), longitude(lon), 
+         subjectCount(0), deptCount(0), deptCapacity(5), next(NULL) {
         subjects = new string[10];
         departments = new DepartmentNode * [deptCapacity];
     }
@@ -32,6 +35,8 @@ public:
     string getName() { return name; }
     string getSector() { return sector; }
     float getRating() { return rating; }
+    double getLatitude() { return latitude; }
+    double getLongitude() { return longitude; }
     DepartmentNode** getDepartments() { return departments; }
     int getDeptCount() { return deptCount; }
     SchoolNode* getNext() { return next; }
@@ -65,6 +70,7 @@ public:
         cout << "Name: " << name << endl;
         cout << "Sector: " << sector << endl;
         cout << "Rating: " << rating << endl;
+        cout << "Coordinates: (" << latitude << ", " << longitude << ")" << endl;
         cout << "Subjects: ";
         for (int i = 0; i < subjectCount; i++) {
             cout << subjects[i];
