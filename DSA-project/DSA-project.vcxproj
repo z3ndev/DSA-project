@@ -127,6 +127,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AirportRailGraph.cpp" />
+    <ClCompile Include="AirportRailGraphNode.cpp" />
     <ClCompile Include="BusHashNode.cpp" />
     <ClCompile Include="BusHashTable.cpp" />
     <ClCompile Include="BusRouteList.cpp" />
@@ -136,9 +138,14 @@
     <ClCompile Include="Doctor.cpp" />
     <ClCompile Include="DoctorManager.cpp" />
     <ClCompile Include="EmergencyHeap.cpp" />
+    <ClCompile Include="FacilityGraph.cpp" />
+    <ClCompile Include="FacilityGraphNode.cpp" />
+    <ClCompile Include="GraphEdge.cpp" />
     <ClCompile Include="HospitalManager.cpp" />
     <ClCompile Include="HouseHold.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MallGraph.cpp" />
+    <ClCompile Include="MallGraphNode.cpp" />
     <ClCompile Include="MedicineFormulaHashTable.cpp" />
     <ClCompile Include="MedicineFormulaHashTable.h" />
     <ClCompile Include="MedicineHashTable.cpp" />
@@ -147,6 +154,8 @@
     <ClCompile Include="PatientManager.cpp" />
     <ClCompile Include="PharmacyManager.cpp" />
     <ClCompile Include="PopulationManager.cpp" />
+    <ClCompile Include="SchoolGraph.cpp" />
+    <ClCompile Include="SchoolGraphNode.cpp" />
     <ClCompile Include="Sector.cpp" />
     <ClCompile Include="Street.cpp" />
     <ClCompile Include="TBus.cpp" />
@@ -160,6 +169,8 @@
     <ClCompile Include="TravelHistory.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AirportRailGraph.h" />
+    <ClInclude Include="AirportRailGraphNode.h" />
     <ClInclude Include="BusHashNode.h" />
     <ClInclude Include="BusHashTable.h" />
     <ClInclude Include="BusRouteList.h" />
@@ -171,11 +182,16 @@
     <ClInclude Include="Doctor.h" />
     <ClInclude Include="DoctorManager.h" />
     <ClInclude Include="EmergencyHeap.h" />
+    <ClInclude Include="FacilityGraph.h" />
+    <ClInclude Include="FacilityGraphNode.h" />
     <ClInclude Include="FacilityNode.h" />
     <ClInclude Include="FacultyNode.h" />
+    <ClInclude Include="GraphEdge.h" />
     <ClInclude Include="Hospital.h" />
     <ClInclude Include="HospitalManager.h" />
     <ClInclude Include="Household.h" />
+    <ClInclude Include="MallGraph.h" />
+    <ClInclude Include="MallGraphNode.h" />
     <ClInclude Include="MallNode.h" />
     <ClInclude Include="Medicine.h" />
     <ClInclude Include="MedicineHashTable.h" />
@@ -187,6 +203,8 @@
     <ClInclude Include="PopulationManager.h" />
     <ClInclude Include="ProductHashTable.h" />
     <ClInclude Include="ProductNode.h" />
+    <ClInclude Include="SchoolGraph.h" />
+    <ClInclude Include="SchoolGraphNode.h" />
     <ClInclude Include="SchoolMinHeap.h" />
     <ClInclude Include="SchoolNode.h" />
     <ClInclude Include="SchoolTree.h" />
