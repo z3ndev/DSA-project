@@ -16,6 +16,8 @@ public:
     string sector;
     int emergencyBeds;
     int graphNodeIndex;  // Index in graph for Dijkstra algorithm
+    double latitude;
+    double longitude;
 
     Hospital() {
         id = "";
@@ -24,6 +26,8 @@ public:
         emergencyBeds = 0;
         specCount = 0;
         graphNodeIndex = -1;  // -1 indicates not assigned to graph
+        latitude = 0.0;
+        longitude = 0.0;
     }
 
     void addSpecialization(const string& s) {

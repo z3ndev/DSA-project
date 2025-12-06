@@ -53,6 +53,11 @@ public:
 
     // Rebuild the emergency heap (call after updates)
     void rebuildHeap();
+
+    // Finda nearest hospital by coordinates (Euclidean distance)
+    // Pass latitude and longitude from any entity (school, sector, etc.)
+    // Returns pointer to nearest hospital and optionally the distance
+    Hospital* findNearestByCoord(double lat, double lon, double* outDistance = nullptr);
 };
 
 #endif

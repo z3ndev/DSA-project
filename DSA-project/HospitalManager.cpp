@@ -2,6 +2,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <cmath>
 
 using namespace std;
 
@@ -50,12 +51,25 @@ bool HospitalManager::loadFromCSV(const char* filename) {
                 h.emergencyBeds = stoi(token);
             } catch (...) { h.emergencyBeds = 0; }
         }
-        // Parse specializations
-        if (getline(ss, token)) {
-            if (!token.empty() && token.front() == '"' && token.back() == '"') {
-                token = token.substr(1, token.length() - 2);
+        // Parse specializations (quoted, comma-separated)
+        if (getline(ss, token, ',')) {
+            string specializationField = token;
+            // If starts with quote, read until closing quote
+            if (!specializationField.empty() && specializationField.front() == '"') {
+                if (specializationField.back() != '"') {
+                    string rest;
+                    while (getline(ss, rest, ',')) {
+                        specializationField += "," + rest;
+                        if (!rest.empty() && rest.back() == '"') break;
+                    }
+                }
+                // Remove surrounding quotes
+                if (specializationField.front() == '"' && specializationField.back() == '"') {
+                    specializationField = specializationField.substr(1, specializationField.length() - 2);
+                }
             }
-            stringstream specStream(token);
+            // Parse individual specializations
+            stringstream specStream(specializationField);
             string spec;
             while (getline(specStream, spec, ',')) {
                 size_t start = spec.find_first_not_of(" \t\r\n");
@@ -63,6 +77,28 @@ bool HospitalManager::loadFromCSV(const char* filename) {
                 if (start != string::npos && end != string::npos) {
                     h.addSpecialization(spec.substr(start, end - start + 1));
                 }
+            }
+        }
+        // Parse coordinates (quoted, "lat, lon")
+        if (getline(ss, token)) {
+            if (!token.empty() && token.front() == '"' && token.back() == '"') {
+                token = token.substr(1, token.length() - 2);
+            }
+            stringstream coordStream(token);
+            string latStr, lonStr;
+            if (getline(coordStream, latStr, ',') && getline(coordStream, lonStr)) {
+                size_t start = latStr.find_first_not_of(" \t\r\n");
+                size_t end = latStr.find_last_not_of(" \t\r\n");
+                if (start != string::npos && end != string::npos) {
+                    latStr = latStr.substr(start, end - start + 1);
+                }
+                start = lonStr.find_first_not_of(" \t\r\n");
+                end = lonStr.find_last_not_of(" \t\r\n");
+                if (start != string::npos && end != string::npos) {
+                    lonStr = lonStr.substr(start, end - start + 1);
+                }
+                try { h.latitude = stod(latStr); } catch (...) { h.latitude = 0.0; }
+                try { h.longitude = stod(lonStr); } catch (...) { h.longitude = 0.0; }
             }
         }
         addHospital(h);
@@ -84,12 +120,25 @@ bool HospitalManager::loadFromCSV(const char* filename) {
                 h.emergencyBeds = stoi(token);
             } catch (...) { h.emergencyBeds = 0; }
         }
-        // Parse specializations
-        if (getline(ss, token)) {
-            if (!token.empty() && token.front() == '"' && token.back() == '"') {
-                token = token.substr(1, token.length() - 2);
+        // Parse specializations (quoted, comma-separated)
+        if (getline(ss, token, ',')) {
+            string specializationField = token;
+            // If starts with quote, read until closing quote
+            if (!specializationField.empty() && specializationField.front() == '"') {
+                if (specializationField.back() != '"') {
+                    string rest;
+                    while (getline(ss, rest, ',')) {
+                        specializationField += "," + rest;
+                        if (!rest.empty() && rest.back() == '"') break;
+                    }
+                }
+                // Remove surrounding quotes
+                if (specializationField.front() == '"' && specializationField.back() == '"') {
+                    specializationField = specializationField.substr(1, specializationField.length() - 2);
+                }
             }
-            stringstream specStream(token);
+            // Parse individual specializations
+            stringstream specStream(specializationField);
             string spec;
             while (getline(specStream, spec, ',')) {
                 size_t start = spec.find_first_not_of(" \t\r\n");
@@ -97,6 +146,28 @@ bool HospitalManager::loadFromCSV(const char* filename) {
                 if (start != string::npos && end != string::npos) {
                     h.addSpecialization(spec.substr(start, end - start + 1));
                 }
+            }
+        }
+        // Parse coordinates (quoted, "lat, lon")
+        if (getline(ss, token)) {
+            if (!token.empty() && token.front() == '"' && token.back() == '"') {
+                token = token.substr(1, token.length() - 2);
+            }
+            stringstream coordStream(token);
+            string latStr, lonStr;
+            if (getline(coordStream, latStr, ',') && getline(coordStream, lonStr)) {
+                size_t start = latStr.find_first_not_of(" \t\r\n");
+                size_t end = latStr.find_last_not_of(" \t\r\n");
+                if (start != string::npos && end != string::npos) {
+                    latStr = latStr.substr(start, end - start + 1);
+                }
+                start = lonStr.find_first_not_of(" \t\r\n");
+                end = lonStr.find_last_not_of(" \t\r\n");
+                if (start != string::npos && end != string::npos) {
+                    lonStr = lonStr.substr(start, end - start + 1);
+                }
+                try { h.latitude = stod(latStr); } catch (...) { h.latitude = 0.0; }
+                try { h.longitude = stod(lonStr); } catch (...) { h.longitude = 0.0; }
             }
         }
         addHospital(h);
@@ -129,7 +200,7 @@ void HospitalManager::listHospitals() {
              << " | Emergency Beds: " << hospitals[i].emergencyBeds 
              << " | Specializations: ";
         hospitals[i].displaySpecializations();
-        cout << "\n";
+        cout << " | Coordinates: (" << hospitals[i].latitude << ", " << hospitals[i].longitude << ")\n";
     }
     cout << "=========================\n";
 }
@@ -261,7 +332,37 @@ void HospitalManager::addHospitalInteractive() {
             h.addSpecialization(spec.substr(start, end - start + 1));
         }
     }
+
+    cout << "Enter Latitude: ";
+    cin >> h.latitude;
+    cout << "Enter Longitude: ";
+    cin >> h.longitude;
+    cin.ignore(1000, '\n');
+
     addHospital(h);
     rebuildHeap();
     cout << "Hospital added successfully!\n";
+}
+
+Hospital* HospitalManager::findNearestByCoord(double lat, double lon, double* outDistance) {
+    if (hospitalCount == 0) return nullptr;
+
+    Hospital* nearest = &hospitals[0];
+    double minDistance = sqrt((lat - hospitals[0].latitude) * (lat - hospitals[0].latitude) +
+                              (lon - hospitals[0].longitude) * (lon - hospitals[0].longitude));
+
+    for (int i = 1; i < hospitalCount; i++) {
+        double distance = sqrt((lat - hospitals[i].latitude) * (lat - hospitals[i].latitude) +
+                               (lon - hospitals[i].longitude) * (lon - hospitals[i].longitude));
+        if (distance < minDistance) {
+            minDistance = distance;
+            nearest = &hospitals[i];
+        }
+    }
+
+    if (outDistance != nullptr) {
+        *outDistance = minDistance;
+    }
+
+    return nearest;
 }
