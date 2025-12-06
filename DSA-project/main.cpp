@@ -31,19 +31,22 @@ void displayMenu() {
     cout << "  3. Search hospital by ID\n";
     cout << "  4. Update emergency beds\n";
     cout << "  5. Add new hospital\n";
+    cout << "  6. Find nearest hospital by coordinates\n";
     cout << "\nPHARMACIES & MEDICINES:\n";
-    cout << "  6. List all pharmacies\n";
-    cout << "  7. Display all medicines\n";
-    cout << "  8. Search medicine by name\n";
-    cout << "  9. Search medicine by formula\n";
+    cout << "  7. List all pharmacies\n";
+    cout << "  8. Display all medicines\n";
+    cout << "  9. Search medicine by name\n";
+    cout << "  10. Search medicine by formula\n";
     cout << "\nPOPULATION & HOUSING:\n";
-    cout << "  10. Display all citizens\n";
-    cout << "  11. Search citizen by CNIC\n";
-    cout << "  12. Display household details\n";
-    cout << "  13. Age distribution report\n";
-    cout << "  14. Occupation summary report\n";
-    cout << "  15. Population density report\n";
-    cout << "  16. Gender ratio report\n";
+    cout << "  11. Display all citizens\n";
+    cout << "  12. Search citizen by CNIC\n";
+    cout << "  13. Display household details\n";
+    cout << "  14. Display family tree\n";
+    cout << "  15. Find nearest hospital for a citizen\n";
+    cout << "  16. Age distribution report\n";
+    cout << "  17. Occupation summary report\n";
+    cout << "  18. Population density report\n";
+    cout << "  19. Gender ratio report\n";
     cout << "\n  0. Exit\n";
     cout << "\n===================================================\n";
     cout << "Enter your choice: ";
@@ -55,6 +58,7 @@ void displayHospitalDetails(Hospital* h) {
     cout << "Name: " << h->name << "\n";
     cout << "Sector: " << h->sector << "\n";
     cout << "Emergency Beds: " << h->emergencyBeds << "\n";
+    cout << "Coordinates: (" << h->latitude << ", " << h->longitude << ")\n";
     cout << "Specializations: ";
     h->displaySpecializations();
     cout << "\n";
@@ -74,6 +78,11 @@ void displayCitizenDetails(Citizen* c) {
     cout << "Age: " << c->age << "\n";
     cout << "Occupation: " << c->occupation << "\n";
     cout << "Gender: " << c->gender << "\n";
+    cout << "Relation: " << c->relation << "\n";
+    if (!c->parentCNIC.empty()) {
+        cout << "Parent CNIC: " << c->parentCNIC << "\n";
+    }
+    cout << "Coordinates: (" << c->latitude << ", " << c->longitude << ")\n";
 }
 
 int getIntInput(const string& prompt) {
@@ -102,6 +111,21 @@ int getPositiveIntInput(const string& prompt) {
             } else {
                 cout << "Error: Value cannot be negative! Please enter a non-negative number.\n";
             }
+        } else {
+            cin.clear();
+            cin.ignore(1000, '\n');  // Clear input buffer
+            cout << "Invalid input! Please enter a number.\n";
+        }
+    }
+}
+
+double getDoubleInput(const string& prompt) {
+    double value;
+    while (true) {
+        cout << prompt;
+        if (cin >> value) {
+            cin.ignore(1000, '\n');  // Clear input buffer
+            return value;
         } else {
             cin.clear();
             cin.ignore(1000, '\n');  // Clear input buffer
@@ -167,7 +191,7 @@ int main() {
         cin.ignore(1000, '\n');  // Clear input buffer after reading choice
 
         switch (choice) {
-            // ========== HOSPITAL OPERATIONS ==========
+            // ========== HOSPITAL OPERATIONS ==========/
             case 1: {
                 printHeader("ALL HOSPITALS");
                 hospitalMgr.listHospitals();
@@ -191,7 +215,7 @@ int main() {
                     }
                     
                     for (int i = 0; i < count; i++) {
-                        cout << "\n" << (i+1) << ".";
+                        cout << "\n" << (i + 1) << ".";
                         displayHospitalDetails(results[i]);
                     }
                 } else {
@@ -232,20 +256,39 @@ int main() {
                 break;
             }
             
-            // ========== PHARMACY OPERATIONS ==========
             case 6: {
+                printHeader("FIND NEAREST HOSPITAL BY COORDINATES");
+                cout << "Enter coordinates of your location:\n";
+                double lat = getDoubleInput("Latitude: ");
+                double lon = getDoubleInput("Longitude: ");
+                
+                double distance;
+                Hospital* nearest = hospitalMgr.findNearestByCoord(lat, lon, &distance);
+                
+                if (nearest) {
+                    cout << "\nNearest hospital found:\n";
+                    displayHospitalDetails(nearest);
+                    cout << "Distance: " << distance << " units\n";
+                } else {
+                    cout << "No hospitals available.\n";
+                }
+                break;
+            }
+            
+            // ========== PHARMACY OPERATIONS ==========
+            case 7: {
                 printHeader("ALL PHARMACIES");
                 pharmacyMgr.listPharmacies();
                 break;
             }
             
-            case 7: {
+            case 8: {
                 printHeader("ALL MEDICINES");
                 pharmacyMgr.displayAllMedicines();
                 break;
             }
             
-            case 8: {
+            case 9: {
                 printHeader("SEARCH MEDICINE BY NAME");
                 string searchName = getStringInput("Enter medicine name: ");
                 
@@ -258,7 +301,7 @@ int main() {
                 break;
             }
             
-            case 9: {
+            case 10: {
                 printHeader("SEARCH MEDICINE BY FORMULA");
                 string searchFormula = getStringInput("Enter medicine formula: ");
                 
@@ -272,13 +315,13 @@ int main() {
             }
             
             // ========== POPULATION OPERATIONS ==========
-            case 10: {
+            case 11: {
                 printHeader("ALL CITIZENS");
                 populationMgr.displayAllCitizens();
                 break;
             }
             
-            case 11: {
+            case 12: {
                 printHeader("SEARCH CITIZEN BY CNIC");
                 string searchCNIC = getStringInput("Enter CNIC (e.g., 61101-1111111-1): ");
                 
@@ -291,7 +334,7 @@ int main() {
                 break;
             }
             
-            case 12: {
+            case 13: {
                 printHeader("HOUSEHOLD DETAILS");
                 string sector = getStringInput("Enter Sector (e.g., G-10): ");
                 string street = getStringInput("Enter Street No (e.g., 22): ");
@@ -301,25 +344,56 @@ int main() {
                 break;
             }
             
-            case 13: {
+            case 14: {
+                printHeader("FAMILY TREE");
+                string headCNIC = getStringInput("Enter CNIC of household head: ");
+                populationMgr.displayFamilyTree(headCNIC);
+                break;
+            }
+            
+            case 15: {
+                printHeader("FIND NEAREST HOSPITAL FOR A CITIZEN");
+                string searchCNIC = getStringInput("Enter Citizen's CNIC: ");
+                
+                Citizen* c = populationMgr.searchByCNIC(searchCNIC);
+                if (c) {
+                    cout << "\nCitizen found: " << c->name << " at (" << c->latitude << ", " << c->longitude << ")\n";
+                    
+                    double distance;
+                    Hospital* nearest = hospitalMgr.findNearestByCoord(c->latitude, c->longitude, &distance);
+                    
+                    if (nearest) {
+                        cout << "\nNearest hospital:\n";
+                        displayHospitalDetails(nearest);
+                        cout << "Distance: " << distance << " units\n";
+                    } else {
+                        cout << "No hospitals available.\n";
+                    }
+                } else {
+                    cout << "Citizen not found!\n";
+                }
+                break;
+            }
+            
+            case 16: {
                 printHeader("AGE DISTRIBUTION REPORT");
                 populationMgr.generateAgeDistribution();
                 break;
             }
             
-            case 14: {
+            case 17: {
                 printHeader("OCCUPATION SUMMARY REPORT");
                 populationMgr.generateOccupationSummary();
                 break;
             }
             
-            case 15: {
+            case 18: {
                 printHeader("POPULATION DENSITY REPORT");
                 populationMgr.generatePopulationDensity();
                 break;
             }
             
-            case 16: {
+            case 19: {
                 printHeader("GENDER RATIO REPORT");
                 populationMgr.generateGenderRatio();
                 break;
@@ -336,7 +410,7 @@ int main() {
             }
             
             default: {
-                cout << "Invalid choice! Please select a valid option (0-16).\n";
+                cout << "Invalid choice! Please select a valid option (0-19).\n";
                 break;
             }
         }

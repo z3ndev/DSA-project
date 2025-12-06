@@ -22,9 +22,9 @@ bool PopulationManager::loadFromCSV(const char* filename) {
         if (line.empty()) continue;
 
         stringstream ss(line);
-        string cnic, name, ageStr, sector, street, house, occupation, gender;
+        string cnic, name, ageStr, sector, street, house, occupation, gender, relation, parentCNIC, latStr, lonStr;
 
-        // Parse CSV: CNIC, Name, Age, Sector, Street, HouseNo, Occupation, Gender
+        // Parse CSV: CNIC, Name, Age, Sector, Street, HouseNo, Occupation, Gender, Relation, ParentCNIC, Latitude, Longitude
         getline(ss, cnic, ',');
         getline(ss, name, ',');
         getline(ss, ageStr, ',');
@@ -32,14 +32,23 @@ bool PopulationManager::loadFromCSV(const char* filename) {
         getline(ss, street, ',');
         getline(ss, house, ',');
         getline(ss, occupation, ',');
-        getline(ss, gender);  // Last field, read to end
+        getline(ss, gender, ',');
+        getline(ss, relation, ',');
+        getline(ss, parentCNIC, ',');
+        getline(ss, latStr, ',');
+        getline(ss, lonStr);
 
         // Convert age to int
         int age = 0;
-        stringstream(ageStr) >> age;
+        try { age = stoi(ageStr); } catch (...) { age = 0; }
 
-        // Add citizen with gender
-        addCitizen(cnic, name, age, sector, street, house, occupation, gender);
+        // Convert coordinates to double
+        double latitude = 0.0, longitude = 0.0;
+        try { latitude = stod(latStr); } catch (...) { latitude = 0.0; }
+        try { longitude = stod(lonStr); } catch (...) { longitude = 0.0; }
+
+        // Add citizen with all fields
+        addCitizen(cnic, name, age, sector, street, house, occupation, gender, relation, parentCNIC, latitude, longitude);
     }
 
     file.close();
@@ -48,9 +57,10 @@ bool PopulationManager::loadFromCSV(const char* filename) {
 
 void PopulationManager::addCitizen(const string& CNIC, const string& name, int age,
     const string& sectorName, const string& streetNo,
-    const string& houseNo, const string& occupation, const string& gender) {
-    // 1. Create Citizen with gender
-    Citizen* c = new Citizen(CNIC, name, age, occupation, gender);
+    const string& houseNo, const string& occupation, const string& gender,
+    const string& relation, const string& parentCNIC, double latitude, double longitude) {
+    // 1. Create Citizen with all fields including coordinates
+    Citizen* c = new Citizen(CNIC, name, age, occupation, gender, relation, parentCNIC, latitude, longitude);
 
     // 2. Insert into CNIC hash
     cnicHash.insert(c);
@@ -129,7 +139,14 @@ void PopulationManager::displayAllCitizens() {
                     Citizen* c = h->members[i];
                     cout << "      - " << c->name << " (Age: " << c->age 
                          << ", Gender: " << c->gender
-                         << ", CNIC: " << c->CNIC << ", Occupation: " << c->occupation << ")\n";
+                         << ", CNIC: " << c->CNIC 
+                         << ", Occupation: " << c->occupation
+                         << ", Relation: " << c->relation;
+                    if (!c->parentCNIC.empty()) {
+                        cout << ", Parent: " << c->parentCNIC;
+                    }
+                    cout << ", Coords: (" << c->latitude << ", " << c->longitude << ")";
+                    cout << ")\n";
                     totalCount++;
                 }
                 h = h->nextSibling;
@@ -139,6 +156,45 @@ void PopulationManager::displayAllCitizens() {
         s = s->next;
     }
     cout << "\nTotal Citizens: " << totalCount << "\n";
+}
+
+// Display family tree starting from a head
+void PopulationManager::displayFamilyTree(const string& headCNIC) {
+    Citizen* head = searchByCNIC(headCNIC);
+    if (!head) {
+        cout << "Citizen with CNIC " << headCNIC << " not found.\n";
+        return;
+    }
+    
+    cout << "\n=== FAMILY TREE ===\n";
+    cout << head->name << " (" << head->CNIC << ") - " << head->relation << "\n";
+    displayFamilyTreeRecursive(headCNIC, 1);
+}
+
+void PopulationManager::displayFamilyTreeRecursive(const string& parentCNIC, int level) {
+    // Find all citizens with this parent
+    Sector* s = city;
+    while (s != nullptr) {
+        Street* st = s->streets;
+        while (st != nullptr) {
+            Household* h = st->houses;
+            while (h != nullptr) {
+                for (int i = 0; i < h->memberCount; i++) {
+                    Citizen* c = h->members[i];
+                    if (c->parentCNIC == parentCNIC) {
+                        // Print with indentation
+                        for (int j = 0; j < level; j++) cout << "  ";
+                        cout << "└─ " << c->name << " (" << c->CNIC << ") - " << c->relation << "\n";
+                        // Recursively print their children
+                        displayFamilyTreeRecursive(c->CNIC, level + 1);
+                    }
+                }
+                h = h->nextSibling;
+            }
+            st = st->next;
+        }
+        s = s->next;
+    }
 }
 
 // Age distribution report
@@ -338,7 +394,13 @@ void PopulationManager::displayHousehold(const string& sectorName,
                                 cout << "  " << (i+1) << ". " << c->name 
                                      << " (Age: " << c->age << ", Gender: " << c->gender
                                      << ", CNIC: " << c->CNIC 
-                                     << ", Occupation: " << c->occupation << ")\n";
+                                     << ", Occupation: " << c->occupation
+                                     << ", Relation: " << c->relation;
+                                if (!c->parentCNIC.empty()) {
+                                    cout << ", Parent: " << c->parentCNIC;
+                                }
+                                cout << ", Coords: (" << c->latitude << ", " << c->longitude << ")";
+                                cout << ")\n";
                             }
                             return;
                         }
