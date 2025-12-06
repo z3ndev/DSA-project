@@ -3,6 +3,7 @@
 
 #include "Hospital.h"
 #include "EmergencyHeap.h"
+#include "HospitalGraph.h"
 #include <string>
 
 using namespace std;
@@ -14,12 +15,17 @@ private:
     int hospitalCount;
 
     EmergencyHeap emergencyHeap;
+    HospitalGraph* hospitalGraph;  // NEW: Graph for Dijkstra routing
 
 public:
     HospitalManager();
+    ~HospitalManager();
 
     // Load hospitals from CSV file
     bool loadFromCSV(const char* filename);
+    
+    // Load hospital edges (for graph-based routing)
+    bool loadHospitalEdgesFromCSV(const string& filename);
 
     // Add a hospital
     bool addHospital(const Hospital& h);
@@ -54,10 +60,15 @@ public:
     // Rebuild the emergency heap (call after updates)
     void rebuildHeap();
 
-    // Finda nearest hospital by coordinates (Euclidean distance)
-    // Pass latitude and longitude from any entity (school, sector, etc.)
-    // Returns pointer to nearest hospital and optionally the distance
+    // Find nearest hospital by coordinates (Euclidean distance)
     Hospital* findNearestByCoord(double lat, double lon, double* outDistance = nullptr);
+    
+    // NEW: Find shortest path between hospitals (Dijkstra - graph-based)
+    bool findShortestPath(const string& startHospitalID, const string& endHospitalID, 
+                          string* path, int& pathLength, int& totalDistance);
+    
+    // Getters
+    HospitalGraph* getGraph() { return hospitalGraph; }
 };
 
 #endif

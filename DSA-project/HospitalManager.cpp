@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iostream>
 #include <cmath>
+#include <climits>
 
 using namespace std;
 
@@ -18,6 +19,11 @@ static string toLowercase(const string& str) {
 }
 
 HospitalManager::HospitalManager() : hospitalCount(0) {
+    hospitalGraph = new HospitalGraph(MAX_HOSPITALS);
+}
+
+HospitalManager::~HospitalManager() {
+    delete hospitalGraph;
 }
 
 bool HospitalManager::loadFromCSV(const char* filename) {
@@ -180,13 +186,15 @@ bool HospitalManager::loadFromCSV(const char* filename) {
 
 bool HospitalManager::addHospital(const Hospital& h) {
     if (hospitalCount >= MAX_HOSPITALS) {
-        cerr << "Hospital storage full." << endl;
         return false;
     }
-
+    
     hospitals[hospitalCount] = h;
-    hospitals[hospitalCount].graphNodeIndex = hospitalCount;
-    emergencyHeap.insert(&hospitals[hospitalCount]);
+    emergencyHeap.insert(&hospitals[hospitalCount]);  // FIXED: Pass pointer
+    
+    // Add to graph for Dijkstra
+    hospitalGraph->addNode(h.id, (float)h.latitude, (float)h.longitude);
+    
     hospitalCount++;
     return true;
 }
@@ -365,4 +373,76 @@ Hospital* HospitalManager::findNearestByCoord(double lat, double lon, double* ou
     }
 
     return nearest;
+}
+
+bool HospitalManager::loadHospitalEdgesFromCSV(const string& filename) {
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cout << "Error opening file: " << filename << endl;
+        return false;
+    }
+
+    string line;
+    getline(file, line); // Skip header
+
+    while (getline(file, line)) {
+        if (line.empty()) continue;
+        
+        stringstream ss(line);
+        string fromHospitalID, toHospitalID, distanceStr;
+
+        getline(ss, fromHospitalID, ',');
+        getline(ss, toHospitalID, ',');
+        getline(ss, distanceStr);
+
+        int distance = 0;
+        try { distance = stoi(distanceStr); } catch (...) { distance = 0; }
+
+        // Use existing search method to find indices
+        int fromIndex = -1, toIndex = -1;
+        for (int i = 0; i < hospitalCount; i++) {
+            if (toLowercase(hospitals[i].id) == toLowercase(fromHospitalID)) {
+                fromIndex = i;
+            }
+            if (toLowercase(hospitals[i].id) == toLowercase(toHospitalID)) {
+                toIndex = i;
+            }
+        }
+
+        if (fromIndex != -1 && toIndex != -1) {
+            hospitalGraph->addEdge(fromIndex, toIndex, distance);
+        } else {
+            cout << "Warning: Edge between " << fromHospitalID << " and " << toHospitalID << " skipped (hospital not found)\n";
+        }
+    }
+    file.close();
+    return true;
+}
+
+bool HospitalManager::findShortestPath(const string& startHospitalID, const string& endHospitalID, 
+                                       string* path, int& pathLength, int& totalDistance) {
+    // Find indices using existing methods
+    int startIndex = -1, endIndex = -1;
+    for (int i = 0; i < hospitalCount; i++) {
+        if (toLowercase(hospitals[i].id) == toLowercase(startHospitalID)) {
+            startIndex = i;
+        }
+        if (toLowercase(hospitals[i].id) == toLowercase(endHospitalID)) {
+            endIndex = i;
+        }
+    }
+
+    if (startIndex == -1 || endIndex == -1) {
+        cout << "One or both hospitals not found!\n";
+        return false;
+    }
+
+    hospitalGraph->dijkstra(startIndex, endIndex, path, pathLength, totalDistance);
+    
+    if (pathLength == 0 || totalDistance == INT_MAX) {
+        cout << "No path found between hospitals.\n";
+        return false;
+    }
+    
+    return true;
 }
