@@ -34,4 +34,10 @@ public:
     void getAllNodeIDs(string* arr) const;
 
     void removeEdge(const string& sourceID, const string& destID);
+    
+    // NEW - Get node by ID
+    TGraphNode* getNodeByID(const string& id) const;
+    
+    // NEW - Get node coordinates by ID
+    bool getNodeCoordinates(const string& id, double& lat, double& lon) const;
 };

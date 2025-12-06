@@ -135,6 +135,27 @@
     <ClCompile Include="SchoolGraphNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MallManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FacilityManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HospitalGraphNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="HospitalGraph.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BusListNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BusList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AirportRailManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Hospital.h">
@@ -296,5 +317,43 @@
     <ClInclude Include="SchoolGraphNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MallManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FacilityManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HospitalGraphNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="HospitalGraph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BusListNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BusList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AirportRailManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SmartCity_dataset\buses.csv" />
+    <None Include="SmartCity_dataset\classroom.csv" />
+    <None Include="SmartCity_dataset\department.csv" />
+    <None Include="SmartCity_dataset\facilities.csv" />
+    <None Include="SmartCity_dataset\facility_edges.csv" />
+    <None Include="SmartCity_dataset\hospital_edges.csv" />
+    <None Include="SmartCity_dataset\hospitals.csv" />
+    <None Include="SmartCity_dataset\mall_edges.csv" />
+    <None Include="SmartCity_dataset\malls.csv" />
+    <None Include="SmartCity_dataset\pharmacies.csv" />
+    <None Include="SmartCity_dataset\population.csv" />
+    <None Include="SmartCity_dataset\products.csv" />
+    <None Include="SmartCity_dataset\schools.csv" />
+    <None Include="SmartCity_dataset\stops.csv" />
+    <None Include="SmartCity_dataset\students.csv" />
   </ItemGroup>
 </Project>

@@ -164,3 +164,18 @@ void TGraph::removeEdge(const string& sourceID, const string& destID) {
     }
 }
 
+TGraphNode* TGraph::getNodeByID(const string& id) const {
+    int index = getNodeIndex(id);
+    if (index == -1) return nullptr;
+    return nodes[index];
+}
+
+bool TGraph::getNodeCoordinates(const string& id, double& lat, double& lon) const {
+    int index = getNodeIndex(id);
+    if (index == -1) return false;
+    
+    lat = nodes[index]->latitude;
+    lon = nodes[index]->longitude;
+    return true;
+}
+

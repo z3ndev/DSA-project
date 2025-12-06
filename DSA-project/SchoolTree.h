@@ -7,11 +7,15 @@ using namespace std;
 #include <fstream>
 #include <sstream>
 #include <cmath>
+#include <climits>
 #include "SchoolNode.h"
+#include "SchoolGraph.h"  // ADD THIS
 
 class SchoolTree {
 private:
     SchoolNode* head;
+    SchoolGraph* schoolGraph;  // ADD THIS - Graph for Dijkstra routing
+    int schoolCount;  // ADD THIS - Track number of schools
     
     // Helper function to convert string to lowercase
     string toLowercase(const string& str) const {
@@ -25,7 +29,9 @@ private:
     }
 
 public:
-    SchoolTree() :head(NULL) {}
+    SchoolTree() : head(NULL), schoolCount(0) {
+        schoolGraph = new SchoolGraph(100);  // Initialize graph
+    }
 
     ~SchoolTree() {
         SchoolNode* curr = head;
@@ -34,6 +40,7 @@ public:
             delete curr;
             curr = nextNode;
         }
+        delete schoolGraph;  // Clean up graph
     }
 
     void addSchool(SchoolNode* school) {
@@ -43,6 +50,41 @@ public:
             while (curr->getNext()) curr = curr->getNext();
             curr->setNext(school);
         }
+        
+        // Add to graph for Dijkstra
+        schoolGraph->addNode(school->getSchoolID(), 
+                            (float)school->getLatitude(), 
+                            (float)school->getLongitude());
+        schoolCount++;
+    }
+    
+    // NEW: Get school index by ID for graph operations
+    int getSchoolIndexByID(const string& schoolID) {
+        string lowerSearchID = toLowercase(schoolID);
+        int index = 0;
+        SchoolNode* curr = head;
+        while (curr) {
+            if (toLowercase(curr->getSchoolID()) == lowerSearchID) {
+                return index;
+            }
+            curr = curr->getNext();
+            index++;
+        }
+        return -1;
+    }
+    
+    // NEW: Get school by index
+    SchoolNode* getSchoolAt(int index) {
+        int currentIndex = 0;
+        SchoolNode* curr = head;
+        while (curr) {
+            if (currentIndex == index) {
+                return curr;
+            }
+            curr = curr->getNext();
+            currentIndex++;
+        }
+        return NULL;
     }
 
     bool addDepartmentToSchool(string schoolID, DepartmentNode* dept) {
@@ -169,7 +211,6 @@ public:
             // Parse subjects (quoted, comma-separated)
             getline(ss, subjectsStr, ',');
             if (!subjectsStr.empty() && subjectsStr.front() == '"') {
-                // Read until closing quote
                 if (subjectsStr.back() != '"') {
                     string rest;
                     while (getline(ss, rest, ',')) {
@@ -177,13 +218,12 @@ public:
                         if (!rest.empty() && rest.back() == '"') break;
                     }
                 }
-                // Remove quotes
                 if (subjectsStr.front() == '"' && subjectsStr.back() == '"') {
                     subjectsStr = subjectsStr.substr(1, subjectsStr.length() - 2);
                 }
             }
 
-            // Parse coordinates (last field, quoted "lat, lon")
+            // Parse coordinates
             getline(ss, coordStr);
             if (!coordStr.empty() && coordStr.front() == '"' && coordStr.back() == '"') {
                 coordStr = coordStr.substr(1, coordStr.length() - 2);
@@ -210,7 +250,7 @@ public:
             float rating = stof(ratingStr);
             SchoolNode* school = new SchoolNode(id, name, sector, rating, latitude, longitude);
 
-            // Parse individual subjects
+            // Parse subjects
             stringstream s2(subjectsStr);
             string sub;
             while (getline(s2, sub, ',')) {
@@ -226,6 +266,65 @@ public:
             addSchool(school);
         }
         file.close();
+    }
+    
+    // NEW: Load school edges for graph-based routing
+    bool loadSchoolEdgesFromCSV(const string& filename) {
+        ifstream file(filename);
+        if (!file.is_open()) {
+            cout << "Error opening file: " << filename << endl;
+            return false;
+        }
+
+        string line;
+        getline(file, line); // Skip header
+
+        while (getline(file, line)) {
+            if (line.empty()) continue;
+            
+            stringstream ss(line);
+            string fromSchoolID, toSchoolID, distanceStr;
+
+            getline(ss, fromSchoolID, ',');
+            getline(ss, toSchoolID, ',');
+            getline(ss, distanceStr);
+
+            int distance = 0;
+            try { distance = stoi(distanceStr); } catch (...) { distance = 0; }
+
+            int fromIndex = getSchoolIndexByID(fromSchoolID);
+            int toIndex = getSchoolIndexByID(toSchoolID);
+
+            if (fromIndex != -1 && toIndex != -1) {
+                schoolGraph->addEdge(fromIndex, toIndex, distance);
+            } else {
+                cout << "Warning: Edge between " << fromSchoolID << " and " << toSchoolID 
+                     << " skipped (school not found)\n";
+            }
+        }
+        file.close();
+        return true;
+    }
+    
+    // NEW: Find shortest path between schools using Dijkstra
+    bool findShortestPath(const string& startSchoolID, const string& endSchoolID, 
+                          string* path, int& pathLength, int& totalDistance) {
+        int startIndex = getSchoolIndexByID(startSchoolID);
+        int endIndex = getSchoolIndexByID(endSchoolID);
+
+        if (startIndex == -1 || endIndex == -1) {
+            cout << "One or both schools not found!\n";
+            return false;
+        }
+
+        schoolGraph->dijkstra(startIndex, endIndex, path, pathLength, totalDistance);
+        
+        if (pathLength == 0 || totalDistance == INT_MAX) {
+            cout << "No path found between schools.\n";
+            return false;
+        }
+        
+        return true;
     }
 
     void loadDepartmentsFromCSV(string filename) {
@@ -339,5 +438,9 @@ public:
 
         return nearest;
     }
+    
+    // Getters
+    int getSchoolCount() const { return schoolCount; }
+    SchoolGraph* getGraph() { return schoolGraph; }
 };
 #endif

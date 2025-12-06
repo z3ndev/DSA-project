@@ -129,8 +129,11 @@
   <ItemGroup>
     <ClCompile Include="AirportRailGraph.cpp" />
     <ClCompile Include="AirportRailGraphNode.cpp" />
+    <ClCompile Include="AirportRailManager.cpp" />
     <ClCompile Include="BusHashNode.cpp" />
     <ClCompile Include="BusHashTable.cpp" />
+    <ClCompile Include="BusList.cpp" />
+    <ClCompile Include="BusListNode.cpp" />
     <ClCompile Include="BusRouteList.cpp" />
     <ClCompile Include="BusRouteNode.cpp" />
     <ClCompile Include="Citizen.cpp" />
@@ -140,12 +143,16 @@
     <ClCompile Include="EmergencyHeap.cpp" />
     <ClCompile Include="FacilityGraph.cpp" />
     <ClCompile Include="FacilityGraphNode.cpp" />
+    <ClCompile Include="FacilityManager.cpp" />
     <ClCompile Include="GraphEdge.cpp" />
+    <ClCompile Include="HospitalGraph.cpp" />
+    <ClCompile Include="HospitalGraphNode.cpp" />
     <ClCompile Include="HospitalManager.cpp" />
     <ClCompile Include="HouseHold.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MallGraph.cpp" />
     <ClCompile Include="MallGraphNode.cpp" />
+    <ClCompile Include="MallManager.cpp" />
     <ClCompile Include="MedicineFormulaHashTable.cpp" />
     <ClCompile Include="MedicineFormulaHashTable.h" />
     <ClCompile Include="MedicineHashTable.cpp" />
@@ -171,8 +178,11 @@
   <ItemGroup>
     <ClInclude Include="AirportRailGraph.h" />
     <ClInclude Include="AirportRailGraphNode.h" />
+    <ClInclude Include="AirportRailManager.h" />
     <ClInclude Include="BusHashNode.h" />
     <ClInclude Include="BusHashTable.h" />
+    <ClInclude Include="BusList.h" />
+    <ClInclude Include="BusListNode.h" />
     <ClInclude Include="BusRouteList.h" />
     <ClInclude Include="BusRouteNode.h" />
     <ClInclude Include="Citizen.h" />
@@ -184,14 +194,18 @@
     <ClInclude Include="EmergencyHeap.h" />
     <ClInclude Include="FacilityGraph.h" />
     <ClInclude Include="FacilityGraphNode.h" />
+    <ClInclude Include="FacilityManager.h" />
     <ClInclude Include="FacilityNode.h" />
     <ClInclude Include="FacultyNode.h" />
     <ClInclude Include="GraphEdge.h" />
     <ClInclude Include="Hospital.h" />
+    <ClInclude Include="HospitalGraph.h" />
+    <ClInclude Include="HospitalGraphNode.h" />
     <ClInclude Include="HospitalManager.h" />
     <ClInclude Include="Household.h" />
     <ClInclude Include="MallGraph.h" />
     <ClInclude Include="MallGraphNode.h" />
+    <ClInclude Include="MallManager.h" />
     <ClInclude Include="MallNode.h" />
     <ClInclude Include="Medicine.h" />
     <ClInclude Include="MedicineHashTable.h" />
@@ -222,6 +236,23 @@
     <ClInclude Include="TPassenger.h" />
     <ClInclude Include="TransportManager.h" />
     <ClInclude Include="TravelHistory.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SmartCity_dataset\buses.csv" />
+    <None Include="SmartCity_dataset\classroom.csv" />
+    <None Include="SmartCity_dataset\department.csv" />
+    <None Include="SmartCity_dataset\facilities.csv" />
+    <None Include="SmartCity_dataset\facility_edges.csv" />
+    <None Include="SmartCity_dataset\hospitals.csv" />
+    <None Include="SmartCity_dataset\hospital_edges.csv" />
+    <None Include="SmartCity_dataset\malls.csv" />
+    <None Include="SmartCity_dataset\mall_edges.csv" />
+    <None Include="SmartCity_dataset\pharmacies.csv" />
+    <None Include="SmartCity_dataset\population.csv" />
+    <None Include="SmartCity_dataset\products.csv" />
+    <None Include="SmartCity_dataset\schools.csv" />
+    <None Include="SmartCity_dataset\stops.csv" />
+    <None Include="SmartCity_dataset\students.csv" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
